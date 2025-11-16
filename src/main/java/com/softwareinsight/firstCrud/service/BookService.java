@@ -27,7 +27,22 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public void deleteBookById(Long id) {
-        bookRepository.deleteById(id);
+    public Optional<Book> updateBook(Long id, Book book) {
+        return bookRepository.findById(id).map(existingBook -> {
+                    existingBook.setName(book.getName());
+                    existingBook.setAuthor(book.getAuthor());
+                    existingBook.setPrice(book.getPrice());
+                    existingBook.setIsbn(book.getIsbn());
+                    return bookRepository.save(existingBook);
+                }
+        );
+    }
+
+    public boolean deleteBookById(Long id) {
+        if (bookRepository.existsById(id)) {
+            bookRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

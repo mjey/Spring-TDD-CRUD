@@ -83,4 +83,52 @@ public class BookServiceTest {
         verify(bookRepository, times(1)).findAll();
     }
 
+    @Test
+    public void testUpdateBook() {
+        // given
+        Book updatedBook = new Book("Clean Code 2nd Edition", "", 45.99, "978-0132350884");
+        updatedBook.setId(1L);
+
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(testBook));
+        when(bookRepository.save(any(Book.class))).thenReturn(updatedBook);
+
+        // when
+        Optional<Book> updatedBookOptional = bookService.updateBook(1L, updatedBook);
+
+
+        // then
+        assertThat(updatedBookOptional).isPresent();
+        assertThat(updatedBookOptional.get().getName()).isEqualTo("Clean Code 2nd Edition");
+        assertThat(updatedBookOptional.get().getId()).isEqualTo(1L);
+
+    }
+
+    @Test
+    public void testDeleteBook () {
+        // geven
+        Long bookId = 2L;
+
+        when(bookRepository.existsById(bookId)).thenReturn(true);
+
+        // when
+        boolean isDeleted = bookService.deleteBookById(2L);
+
+        // then
+        assertThat(isDeleted).isTrue();
+        verify(bookRepository, times(1)).existsById(2L);
+        verify(bookRepository, times(1)).deleteById(2L);
+    }
+
+    @Test
+    public void testDeleteNotFound () {
+        Long bookId = 2L;
+        when(bookRepository.existsById(bookId)).thenReturn(false);
+
+        boolean isDeleted = bookService.deleteBookById(2L);
+
+        assertThat(isDeleted).isFalse();
+        verify(bookRepository, times(1)).existsById(2L);
+        verify(bookRepository, never()).deleteById(2L);
+    }
+
 }
