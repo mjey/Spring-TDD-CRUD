@@ -32,7 +32,7 @@ public class Book {
         this.isbn = isbn;
     }
 
-    public long getId() { return id; }
+    public Long getId() { return this.id; }
     public void setId(long id) { this.id = id;}
 
     public String getName() {  return name; }
